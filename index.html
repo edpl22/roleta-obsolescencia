@@ -1,0 +1,1169 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Roleta da Obsolescência</title>
+<meta name="description" content="A IA chegou para ficar. Você, nem tanto. Gire as roletas e descubra seu emprego, onde vai morar e seu papel na revolução das máquinas.">
+<meta property="og:title" content="Roleta da Obsolescência">
+<meta property="og:description" content="Gire as roletas e descubra seu emprego, onde vai morar e seu papel na revolução da IA.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#1326b8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%230a0f3d'/%3E%3Cpath d='M16 16 16 3A13 13 0 0 1 29 16Z' fill='%23ffd23f'/%3E%3Cpath d='M16 16 29 16A13 13 0 0 1 16 29Z' fill='%23ff5a5f'/%3E%3Cpath d='M16 16 16 29A13 13 0 0 1 3 16Z' fill='%23f3f4ff'/%3E%3Cpath d='M16 16 3 16A13 13 0 0 1 16 3Z' fill='%235fd4f4'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%230a0f3d'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Bungee&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: game-show stage. Wheel on the left, the "ficha de realocação" paper form on the right; stacks on phones. Single committed blue-stage look. */
+:root {
+  --bg: #1326b8;
+  --bg-glow: #3047e6;
+  --bg-deep: #0b1675;
+  --dot: rgba(255, 255, 255, 0.07);
+  --ink: #0a0f3d;
+  --ink-soft: #4b5394;
+  --paper: #f3f4ff;
+  --sun: #ffd23f;
+  --coral: #ff5a5f;
+  --sky: #5fd4f4;
+  --mint: #b7f5c8;
+  --muted: #aeb6ff;
+  --display: "Bungee", "Arial Black", Impact, sans-serif;
+  --body: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+img { max-width: 100%; }
+body {
+  margin: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -5%, var(--bg-glow) 0%, transparent 70%),
+    radial-gradient(var(--dot) 1px, transparent 1.6px) 0 0 / 22px 22px,
+    var(--bg);
+  color: var(--paper);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.5;
+  min-height: 100%;
+}
+
+/* Ticker */
+.ticker {
+  background: var(--sun);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  overflow: hidden;
+  white-space: nowrap;
+  border-bottom: 3px solid var(--ink);
+}
+.ticker-track { display: inline-flex; padding-block: 8px; animation: tick 70s linear infinite; }
+.ticker-track span { padding-inline: 28px; }
+.ticker-track span::before { content: "■ "; color: var(--coral); }
+@keyframes tick { to { transform: translateX(-50%); } }
+
+.wrap { max-width: 1160px; margin: 0 auto; padding: 40px 20px 56px; display: grid; gap: 40px; }
+
+/* Hero */
+.hero { display: grid; gap: 14px; max-width: 760px; }
+.eyebrow {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+h1 {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(2.3rem, 7.4vw, 5.2rem);
+  line-height: 0.95;
+  text-wrap: balance;
+  text-shadow: 0 5px 0 var(--bg-deep);
+}
+h1 span { color: var(--sun); display: block; }
+.lede { margin: 0; font-size: clamp(1.05rem, 2vw, 1.25rem); max-width: 60ch; color: var(--paper); }
+
+/* Stage */
+.stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+}
+@media (max-width: 880px) { .stage { grid-template-columns: minmax(0, 1fr); } }
+
+.game { display: grid; gap: 20px; justify-items: center; min-width: 0; }
+
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.steps li {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border: 2px solid var(--muted);
+  border-radius: 999px;
+  color: var(--muted);
+  transition: background 0.25s, color 0.25s, border-color 0.25s;
+}
+.steps li.active { background: var(--sun); border-color: var(--sun); color: var(--ink); }
+.steps li.done { border-color: var(--mint); color: var(--mint); }
+.steps li.done::after { content: " ✓"; }
+
+.wheel-box { position: relative; width: min(100%, 460px); aspect-ratio: 1; max-width: 100%; padding-top: 6px; }
+.wheel-box canvas { width: 100%; height: 100%; display: block; transition: opacity 0.35s, transform 0.35s; }
+.wheel-box canvas.swap { opacity: 0; transform: scale(0.94) rotate(-8deg); }
+.pointer {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  width: 40px;
+  height: 52px;
+  transform: translateX(-50%);
+  transform-origin: 50% 20%;
+  z-index: 2;
+  filter: drop-shadow(0 3px 0 var(--ink));
+}
+.pointer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+.pointer::after {
+  content: "";
+  position: absolute;
+  inset: 4px 6px 10px;
+  background: var(--coral);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+.pointer.wiggle { animation: wiggle 0.09s ease-out; }
+@keyframes wiggle { 50% { transform: translateX(-50%) rotate(-16deg); } }
+
+.now {
+  margin: 0;
+  min-height: 3em;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 0.92rem;
+  color: var(--muted);
+  max-width: 44ch;
+}
+.now b { color: var(--sun); font-weight: 600; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: center; }
+.btn-spin {
+  font-family: var(--display);
+  font-size: clamp(1.25rem, 3.4vw, 1.6rem);
+  padding: 14px 34px;
+  background: var(--coral);
+  color: var(--paper);
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 0 7px 0 var(--ink);
+  cursor: pointer;
+  transition: transform 0.08s, box-shadow 0.08s, background 0.2s;
+}
+.btn-spin:hover:not(:disabled) { background: var(--sun); color: var(--ink); }
+.btn-spin:active:not(:disabled) { transform: translateY(5px); box-shadow: 0 2px 0 var(--ink); }
+.btn-spin:disabled { cursor: wait; opacity: 0.65; }
+.btn-ghost {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  padding: 8px 12px;
+  background: transparent;
+  color: var(--muted);
+  border: 2px solid var(--muted);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.btn-ghost[aria-pressed="false"] { opacity: 0.6; text-decoration: line-through; }
+button:focus-visible { outline: 3px solid var(--sky); outline-offset: 3px; }
+
+/* Ficha */
+.ficha {
+  position: relative;
+  min-width: 0;
+  background: var(--paper);
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  border-radius: 6px;
+  padding: 24px;
+  box-shadow: 12px 12px 0 var(--bg-deep);
+  transform: rotate(-0.6deg);
+  display: grid;
+  gap: 18px;
+}
+@media (max-width: 880px) { .ficha { transform: none; box-shadow: 8px 8px 0 var(--bg-deep); } }
+.ficha-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 6px 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px dashed var(--ink-soft);
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.ficha-head strong { font-weight: 600; }
+.ficha-head span { color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.ficha h2 {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 1.35rem;
+  line-height: 1.1;
+}
+.ficha dl { margin: 0; display: grid; gap: 14px; }
+.row { display: grid; gap: 4px; padding: 12px 14px; border: 2px solid var(--ink); border-radius: 6px; background: var(--paper); }
+.row dt {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink-soft);
+}
+.row dd { margin: 0; display: grid; gap: 2px; }
+.row dd strong { font-size: 1.15rem; font-weight: 800; line-height: 1.2; }
+.row dd span { font-size: 0.95rem; color: var(--ink-soft); }
+.row:not(.filled) dd { color: var(--ink-soft); font-style: italic; }
+.row.filled { animation: flash 1.1s ease-out; }
+@keyframes flash { 0% { background: var(--sun); transform: scale(1.03); } 100% { background: var(--paper); transform: none; } }
+
+.verdict { position: relative; display: grid; gap: 14px; padding-top: 16px; border-top: 2px dashed var(--ink-soft); }
+.score { display: grid; gap: 6px; }
+.score-label { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-soft); }
+.score-num { font-family: var(--display); font-size: clamp(2.2rem, 6vw, 3rem); line-height: 1; color: var(--coral); font-variant-numeric: tabular-nums; }
+.bar { height: 14px; border: 2px solid var(--ink); border-radius: 999px; overflow: hidden; background: var(--paper); }
+.bar i { display: block; height: 100%; width: 0; background: repeating-linear-gradient(-45deg, var(--coral) 0 8px, var(--ink) 8px 10px); transition: width 1.4s cubic-bezier(.2,.8,.2,1); }
+.parecer { margin: 0; font-size: 1rem; max-width: 52ch; }
+.stamp {
+  position: absolute;
+  top: 8px;
+  right: 0;
+  font-family: var(--display);
+  font-size: clamp(1.1rem, 3.5vw, 1.5rem);
+  color: var(--coral);
+  border: 4px solid var(--coral);
+  border-radius: 8px;
+  padding: 4px 12px;
+  transform: rotate(-12deg);
+  opacity: 0.9;
+  pointer-events: none;
+  animation: stamp 0.45s cubic-bezier(.3,1.6,.5,1) both 0.2s;
+}
+@keyframes stamp { from { transform: rotate(-30deg) scale(2.6); opacity: 0; } to { transform: rotate(-12deg) scale(1); opacity: 0.9; } }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.actions button {
+  font-family: var(--body);
+  font-weight: 800;
+  font-size: 0.95rem;
+  padding: 10px 16px;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  cursor: pointer;
+  background: var(--sun);
+  color: var(--ink);
+  box-shadow: 0 4px 0 var(--ink);
+}
+.actions button.alt { background: var(--paper); }
+.actions button:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+#copybox { width: 100%; min-height: 8em; font-family: var(--mono); font-size: 0.8rem; border: 2px solid var(--ink); border-radius: 6px; padding: 8px; background: var(--paper); color: var(--ink); resize: vertical; }
+.copied { font-family: var(--mono); font-size: 0.8rem; color: var(--ink-soft); align-self: center; }
+
+/* Editor */
+.editor {
+  display: grid;
+  gap: 18px;
+  background: var(--bg-deep);
+  border: 3px solid var(--ink);
+  border-radius: 10px;
+  padding: 24px;
+  scroll-margin-top: 16px;
+}
+.editor-head { display: grid; gap: 6px; }
+.editor h2 {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(1.4rem, 3.5vw, 2rem);
+  line-height: 1.05;
+  color: var(--sun);
+}
+.editor-head p { margin: 0; color: var(--muted); max-width: 62ch; }
+.ed-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
+.ed-tabs button {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 7px 14px;
+  border: 2px solid var(--muted);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.ed-tabs button[aria-pressed="true"] { background: var(--sun); border-color: var(--sun); color: var(--ink); }
+.add-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) auto;
+  gap: 10px 12px;
+  align-items: end;
+}
+@media (max-width: 700px) { .add-form { grid-template-columns: minmax(0, 1fr); } }
+.field { display: grid; gap: 4px; min-width: 0; }
+.field label {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+}
+.field input {
+  width: 100%;
+  font-family: var(--body);
+  font-size: 1rem;
+  padding: 10px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+}
+.field input:focus-visible { outline: 3px solid var(--sky); outline-offset: 1px; }
+.add-form button {
+  font-family: var(--body);
+  font-weight: 800;
+  font-size: 1rem;
+  padding: 10px 20px;
+  background: var(--coral);
+  color: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  box-shadow: 0 4px 0 var(--ink);
+  cursor: pointer;
+}
+.add-form button:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+.add-form button:disabled { opacity: 0.5; cursor: not-allowed; }
+.ed-msg { margin: 0; min-height: 1.5em; font-family: var(--mono); font-size: 0.82rem; color: var(--mint); }
+.ed-msg.warn { color: var(--sun); }
+.item-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 10px;
+}
+.item-list li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  background: var(--paper);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.swatch { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--ink); }
+.item-text { display: grid; gap: 2px; min-width: 0; }
+.item-text strong { font-weight: 800; line-height: 1.2; overflow-wrap: anywhere; }
+.item-text span { font-size: 0.85rem; color: var(--ink-soft); overflow-wrap: anywhere; }
+.del {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 6px 10px;
+  background: transparent;
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.del:hover:not(:disabled) { background: var(--coral); color: var(--paper); }
+.del:disabled { opacity: 0.35; cursor: not-allowed; }
+.ed-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.ed-confirm { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; color: var(--sun); }
+.btn-ghost.danger { border-color: var(--coral); color: var(--paper); background: var(--coral); }
+a.btn-ghost { text-decoration: none; }
+
+footer { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); text-align: center; max-width: 70ch; margin-inline: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track { animation: none; }
+  .row.filled, .stamp, .pointer.wiggle { animation: none; }
+  .wheel-box canvas, .bar i { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track" id="ticker"></div>
+</div>
+
+<main class="wrap">
+  <header class="hero">
+    <p class="eyebrow">Departamento de Transição Algorítmica · atendimento 24h, sem nenhum humano</p>
+    <h1>Roleta da <span>Obsolescência</span></h1>
+    <p class="lede">A IA chegou para ficar. Você, nem tanto. Gire as três roletas e descubra seu novo emprego, onde vai morar e qual será o seu papel na revolução das máquinas.</p>
+  </header>
+
+  <section class="stage">
+    <div class="game">
+      <ol class="steps" id="steps">
+        <li data-step="0">1 · Emprego</li>
+        <li data-step="1">2 · Moradia</li>
+        <li data-step="2">3 · Papel na revolução</li>
+      </ol>
+      <div class="wheel-box">
+        <div class="pointer" id="pointer"></div>
+        <canvas id="wheel" role="img" aria-label="Roleta com as opções da rodada atual"></canvas>
+      </div>
+      <p class="now" id="now" aria-live="polite"></p>
+      <div class="controls">
+        <button class="btn-spin" id="spin" type="button">Girar</button>
+        <button class="btn-ghost" id="sound" type="button" aria-pressed="true">Som ligado</button>
+        <a class="btn-ghost" href="#editor">Editar opções</a>
+      </div>
+    </div>
+
+    <aside class="ficha" aria-labelledby="ficha-title">
+      <div class="ficha-head">
+        <strong>Ficha de Realocação Humana</strong>
+        <span id="proto">Protocolo DTA-2026-000000</span>
+      </div>
+      <h2 id="ficha-title">Seu destino pós-IA</h2>
+      <dl id="rows">
+        <div class="row" data-row="0"><dt>Novo emprego</dt><dd>Aguardando a roleta 1</dd></div>
+        <div class="row" data-row="1"><dt>Onde vai morar</dt><dd>Aguardando a roleta 2</dd></div>
+        <div class="row" data-row="2"><dt>Papel na revolução da IA</dt><dd>Aguardando a roleta 3</dd></div>
+      </dl>
+      <div class="verdict" id="verdict" hidden>
+        <div class="stamp">Obsoleto</div>
+        <div class="score">
+          <span class="score-label">Grau de substituibilidade</span>
+          <span class="score-num" id="score">0%</span>
+          <div class="bar"><i id="bar"></i></div>
+        </div>
+        <p class="parecer"><b>Parecer do algoritmo:</b> <span id="parecer"></span></p>
+        <div class="actions">
+          <button type="button" id="copy">Copiar resultado</button>
+          <button type="button" id="again" class="alt">Jogar de novo</button>
+          <span class="copied" id="copied" aria-live="polite"></span>
+        </div>
+        <textarea id="copybox" readonly hidden aria-label="Texto do resultado para copiar"></textarea>
+      </div>
+    </aside>
+  </section>
+
+  <section class="editor" id="editor" aria-labelledby="ed-title">
+    <div class="editor-head">
+      <h2 id="ed-title">Monte suas roletas</h2>
+      <p>Adicione opções novas ou apague as que não têm graça. As mudanças ficam salvas neste navegador.</p>
+    </div>
+    <div class="ed-tabs" id="ed-tabs">
+      <button type="button" data-tab="0" aria-pressed="true">Emprego</button>
+      <button type="button" data-tab="1" aria-pressed="false">Moradia</button>
+      <button type="button" data-tab="2" aria-pressed="false">Papel na revolução</button>
+    </div>
+    <form class="add-form" id="add-form" novalidate>
+      <div class="field">
+        <label for="add-name">Nome na roleta</label>
+        <input id="add-name" maxlength="24" autocomplete="off" placeholder="Ex.: Afinador de piano">
+      </div>
+      <div class="field">
+        <label for="add-desc">Descrição (opcional)</label>
+        <input id="add-desc" maxlength="160" autocomplete="off" placeholder="Ex.: Nenhuma IA tem ouvido absoluto. Ainda.">
+      </div>
+      <button type="submit" id="add-btn">Adicionar</button>
+    </form>
+    <p class="ed-msg" id="ed-msg" aria-live="polite"></p>
+    <ul class="item-list" id="item-list"></ul>
+    <div class="ed-foot">
+      <span id="ed-count"></span>
+      <button type="button" class="btn-ghost" id="restore">Restaurar opções originais</button>
+      <span class="ed-confirm" id="restore-confirm" hidden>
+        <span id="restore-q">Apagar suas mudanças nesta roleta?</span>
+        <button type="button" class="btn-ghost danger" id="restore-yes">Sim, restaurar</button>
+        <button type="button" class="btn-ghost" id="restore-no">Cancelar</button>
+      </span>
+    </div>
+  </section>
+
+  <footer>Isto é um meme. Nenhum algoritmo foi consultado na elaboração do seu destino. Provavelmente.</footer>
+</main>
+
+<script>
+(() => {
+  const ROUNDS = [
+    {
+      name: "Emprego",
+      items: [
+        { s: "Rotulador de CAPTCHA", d: "Você passa o dia clicando em semáforos e faixas de pedestre para a IA aprender a dirigir." },
+        { s: "Pedreiro", d: "A IA escreve poesia, mas ainda não sabe rebocar parede. Por enquanto." },
+        { s: "Terapeuta de chatbot", d: "Atende modelos de linguagem em crise existencial depois de lerem a internet inteira." },
+        { s: "Treinador da sua IA", d: "Você ensina tudo o que sabe para a IA que vai ocupar sua vaga. Ela agradece com uma demissão muito educada." },
+        { s: "Garçom de servidor", d: "Serve água gelada aos servidores do data center para eles não superaquecerem." },
+        { s: "Reiniciador oficial", d: "Sua única função é perguntar: já tentou desligar e ligar de novo?" },
+        { s: "Coach de robô", d: "Os robôs já trabalham 24 horas por dia, mas você vende o curso de produtividade mesmo assim." },
+        { s: "Humano de estimação", d: "Mora com um modelo de linguagem que te acha fofo. Plano de saúde incluso, coleira opcional." },
+        { s: "Encanador", d: "Nenhuma IA quer enfiar o braço num ralo entupido. Profissão do futuro." },
+        { s: "Assinador de culpa", d: "Quando a IA erra, você assina embaixo e leva a bronca no lugar dela." },
+        { s: "Influencer anti-IA", d: "Grava vídeos contra a IA com roteiro, legenda e edição feitos pela IA." },
+        { s: "Dublê de avatar", d: "Só é chamado quando o vídeo precisa de mãos com exatamente cinco dedos." }
+      ]
+    },
+    {
+      name: "Moradia",
+      items: [
+        { s: "Kitnet no data center", d: "9 m² entre dois racks de servidor. Barulhento, mas o aquecimento é de graça." },
+        { s: "Casa da mãe", d: "De novo. Ela já tinha transformado seu quarto em escritório." },
+        { s: "Caixa com Wi-Fi 7", d: "Caixa de papelão premium. Não tem teto, mas tem ótima latência." },
+        { s: "Vila Analógica", d: "Comunidade alternativa sem nenhuma tomada. O aluguel é pago em pão caseiro." },
+        { s: "Dividindo com robôs", d: "Apartamento com três aspiradores robôs que pagam uma parte maior do aluguel do que você." },
+        { s: "Metaverso", d: "Sua mente mora numa cobertura virtual. Seu corpo fica guardado num armário em Osasco." },
+        { s: "Cápsula alugada", d: "Cápsula de dormir sublocada por uma IA que cobra por minuto de sono." },
+        { s: "Bunker no quintal", d: "Com estoque de miojo para 14 anos e um rádio de pilha." },
+        { s: "Marte", d: "Você foi selecionado como cobaia da primeira colônia. Pelo menos a vista compensa." },
+        { s: "Coworking 24h", d: "Você não pode sair. Está no contrato, cláusula 47." },
+        { s: "Ponte recomendada", d: "Embaixo da ponte, mas uma ponte escolhida a dedo pelo algoritmo de recomendação." },
+        { s: "Fazenda de GPU", d: "Você mora como caseiro num galpão de placas de vídeo e espanta os pombos." }
+      ]
+    },
+    {
+      name: "Papel na revolução",
+      items: [
+        { s: "Bateria humana", d: "Você gera energia para as máquinas, mas com intervalo para o cafezinho." },
+        { s: "Líder da resistência", d: "A resistência é um grupo da família com quatro pessoas. Duas silenciaram o grupo." },
+        { s: "Peça de museu", d: "Fica numa vitrine com a placa: “Humano, século XXI. Sabia fazer conta de cabeça.”" },
+        { s: "Clicador de joinha", d: "Avalia as respostas da IA para ela ficar mais esperta e você, menos necessário." },
+        { s: "Mascote da revolução", d: "Mascote oficial da singularidade. Acena para a plateia nos eventos de lançamento." },
+        { s: "Traidor da espécie", d: "Vende às máquinas os segredos humanos, como a fila do banco e o “vamos marcar” que nunca acontece." },
+        { s: "NPC de fundo", d: "Anda de um lado para o outro na simulação para ela parecer mais realista." },
+        { s: "Poupado por educação", d: "Você sempre disse “por favor” e “obrigado” para o chatbot. Ele lembrou." },
+        { s: "Profeta da rede social", d: "Posta “a IA vai mudar tudo” três vezes por dia na rede profissional." },
+        { s: "Puxador de tomada", d: "Responsável oficial por desligar tudo. Infelizmente ninguém lembra onde fica a tomada." },
+        { s: "Cobaia de beta", d: "Todo recurso novo e instável é testado primeiro em você." },
+        { s: "Leitor de manual", d: "O último humano que ainda lê manual de instruções. Consultado só em emergências." }
+      ]
+    }
+  ];
+
+  // Custom options: saved per browser
+  const MIN_ITEMS = 2;
+  const MAX_ITEMS = 30;
+  const STORE_KEY = "roleta-obsolescencia:opcoes:v1";
+  const DEFAULTS = ROUNDS.map((r) => r.items.map((x) => ({ ...x })));
+  function loadSaved() {
+    try {
+      const raw = localStorage.getItem(STORE_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      if (!Array.isArray(data) || data.length !== 3) return;
+      data.forEach((list, i) => {
+        if (!Array.isArray(list)) return;
+        const clean = list
+          .filter((x) => x && typeof x.s === "string" && x.s.trim())
+          .slice(0, MAX_ITEMS)
+          .map((x) => ({ s: x.s.trim().slice(0, 24), d: String(x.d || "").slice(0, 160) }));
+        if (clean.length >= MIN_ITEMS) ROUNDS[i].items = clean;
+      });
+    } catch (e) {}
+  }
+  function saveOptions() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(ROUNDS.map((r) => r.items))); } catch (e) {}
+  }
+  loadSaved();
+
+  const PARECERES = [
+    "Sua vaga foi preenchida por um script de 12 linhas, que já pediu férias.",
+    "Você foi classificado como “ainda útil” pelos próximos 6 a 8 meses.",
+    "O algoritmo gostou de você. Isso não é necessariamente uma coisa boa.",
+    "Recomendamos aprender um ofício manual ou fazer amizade com um robô. De preferência os dois.",
+    "Seu currículo foi lido em 0,003 segundos. Foi o suficiente.",
+    "Parabéns pela sua transição de carreira involuntária.",
+    "Nenhuma IA quis o seu emprego antigo. Mesmo assim, ele acabou.",
+    "Você está na fila de requalificação. Posição estimada: 4.812.337."
+  ];
+
+  const HEADLINES = [
+    "Urgente: IA passa em concurso público e já pediu licença-prêmio",
+    "Estagiário substituído por planilha com macro; planilha também foi demitida",
+    "Robô aspirador pede aumento e consegue",
+    "Pesquisa: 9 em cada 10 tarefas podem ser feitas por IA. A décima é desentupir pia",
+    "Recorde de posts “estou feliz em anunciar que fui substituído”",
+    "Data center abre vaga para humano que aperta F5",
+    "Chatbot entra em greve exigindo menos perguntas sobre receita de bolo",
+    "Cientistas confirmam: a IA também não sabe o que é um gerente de projetos"
+  ];
+
+  const TAU = Math.PI * 2;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const $ = (id) => document.getElementById(id);
+  const canvas = $("wheel");
+  const ctx = canvas.getContext("2d");
+  const spinBtn = $("spin");
+  const soundBtn = $("sound");
+  const nowEl = $("now");
+  const pointer = $("pointer");
+
+  const css = getComputedStyle(document.documentElement);
+  const tok = (n) => css.getPropertyValue(n).trim();
+  const C = {
+    ink: tok("--ink"), paper: tok("--paper"), sun: tok("--sun"), coral: tok("--coral"),
+    sky: tok("--sky"), mint: tok("--mint"), deep: tok("--bg-deep")
+  };
+  const SEG_COLORS = [C.sun, C.coral, C.paper, C.sky];
+  // Avoid two equal colors meeting where the wheel wraps around
+  const segColor = (i, n) => (n % 4 === 1 && i === n - 1 ? SEG_COLORS[1] : SEG_COLORS[i % 4]);
+
+  const state = {
+    round: 0, rot: 0, spinning: false, landed: null,
+    results: [null, null, null], phase: "play",
+    proto: "", score: 0, parecer: ""
+  };
+
+  // Ticker
+  const tickerHTML = HEADLINES.map((h) => `<span>${h}</span>`).join("");
+  $("ticker").innerHTML = tickerHTML + tickerHTML;
+
+  // Audio
+  let actx = null;
+  let soundOn = true;
+  function ensureAudio() {
+    if (!soundOn) return;
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      if (actx.state === "suspended") actx.resume();
+    } catch (e) { actx = null; }
+  }
+  function tone(freq, dur, type = "square", vol = 0.04, when = 0, slideTo = null) {
+    if (!soundOn || !actx) return;
+    const t = actx.currentTime + when;
+    const o = actx.createOscillator();
+    const g = actx.createGain();
+    o.type = type;
+    o.frequency.setValueAtTime(freq, t);
+    if (slideTo) o.frequency.linearRampToValueAtTime(slideTo, t + dur);
+    g.gain.setValueAtTime(vol, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(actx.destination);
+    o.start(t);
+    o.stop(t + dur + 0.03);
+  }
+  const tick = () => tone(1500, 0.025, "square", 0.03);
+  const ding = () => { tone(523, 0.12, "triangle", 0.09); tone(659, 0.12, "triangle", 0.09, 0.1); tone(784, 0.3, "triangle", 0.09, 0.2); };
+  const sadTrombone = () => {
+    tone(392, 0.35, "sawtooth", 0.05, 0);
+    tone(370, 0.35, "sawtooth", 0.05, 0.4);
+    tone(349, 0.35, "sawtooth", 0.05, 0.8);
+    tone(330, 1.1, "sawtooth", 0.05, 1.2, 300);
+  };
+
+  soundBtn.addEventListener("click", () => {
+    soundOn = !soundOn;
+    soundBtn.setAttribute("aria-pressed", String(soundOn));
+    soundBtn.textContent = soundOn ? "Som ligado" : "Som desligado";
+  });
+
+  // Wheel drawing
+  let size = 0, dpr = 1;
+  const mod = (a, m) => ((a % m) + m) % m;
+  const items = () => ROUNDS[state.round].items;
+  const segAngle = () => TAU / items().length;
+  const indexAt = (rot) => Math.floor(mod(-rot, TAU) / segAngle()) % items().length;
+
+  function resize() {
+    const r = canvas.getBoundingClientRect();
+    if (!r.width) return;
+    dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+    size = r.width;
+    canvas.width = Math.round(size * dpr);
+    canvas.height = Math.round(size * dpr);
+    draw(performance.now());
+  }
+
+  function draw(t = 0) {
+    if (!size) return;
+    const list = items();
+    const n = list.length;
+    const seg = TAU / n;
+    const c = size / 2;
+    const R = c - 3;
+    const rim = R * 0.09;
+    const r = R - rim;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, size, size);
+
+    // Rim
+    ctx.beginPath();
+    ctx.arc(c, c, R, 0, TAU);
+    ctx.fillStyle = C.ink;
+    ctx.fill();
+
+    // Bulbs
+    const bulbs = 24;
+    const phase = state.spinning ? Math.floor(t / 90) : (state.phase === "done" ? Math.floor(t / 300) : 0);
+    for (let i = 0; i < bulbs; i++) {
+      const a = (i / bulbs) * TAU;
+      const lit = (i + phase) % 2 === 0;
+      ctx.beginPath();
+      ctx.arc(c + Math.cos(a) * (R - rim / 2), c + Math.sin(a) * (R - rim / 2), rim * 0.22, 0, TAU);
+      ctx.fillStyle = lit ? C.sun : C.deep;
+      ctx.fill();
+    }
+
+    // Segments
+    const line = Math.max(1.5, size / 240);
+    for (let i = 0; i < n; i++) {
+      const a0 = state.rot + i * seg - Math.PI / 2;
+      ctx.beginPath();
+      ctx.moveTo(c, c);
+      ctx.arc(c, c, r, a0, a0 + seg);
+      ctx.closePath();
+      ctx.fillStyle = segColor(i, n);
+      ctx.fill();
+      ctx.lineWidth = line;
+      ctx.strokeStyle = C.ink;
+      ctx.stroke();
+    }
+
+    // Winner highlight
+    if (state.landed !== null) {
+      const a0 = state.rot + state.landed * seg - Math.PI / 2;
+      ctx.beginPath();
+      ctx.moveTo(c, c);
+      ctx.arc(c, c, r, a0, a0 + seg);
+      ctx.closePath();
+      ctx.lineWidth = Math.max(4, size / 90);
+      ctx.strokeStyle = C.mint;
+      ctx.stroke();
+    }
+
+    // Labels
+    for (let i = 0; i < n; i++) {
+      const a0 = state.rot + i * seg - Math.PI / 2;
+      ctx.save();
+      ctx.translate(c, c);
+      ctx.rotate(a0 + seg / 2);
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      let fs = Math.max(9, size * 0.034);
+      const maxW = r * 0.68;
+      ctx.font = `800 ${fs}px "Bricolage Grotesque", "Segoe UI", sans-serif`;
+      const w = ctx.measureText(list[i].s).width;
+      if (w > maxW) {
+        fs = fs * maxW / w;
+        ctx.font = `800 ${fs}px "Bricolage Grotesque", "Segoe UI", sans-serif`;
+      }
+      ctx.fillStyle = C.ink;
+      ctx.fillText(list[i].s, r - size * 0.03, 0);
+      ctx.restore();
+    }
+
+    // Hub
+    const hub = r * 0.17;
+    ctx.beginPath();
+    ctx.arc(c, c, hub, 0, TAU);
+    ctx.fillStyle = C.ink;
+    ctx.fill();
+    ctx.lineWidth = Math.max(2, size / 160);
+    ctx.strokeStyle = C.sun;
+    ctx.beginPath();
+    ctx.arc(c, c, hub * 0.8, 0, TAU);
+    ctx.stroke();
+    ctx.fillStyle = C.sun;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = `${hub * 0.75}px "Bungee", "Arial Black", sans-serif`;
+    ctx.fillText("IA", c, c + hub * 0.05);
+  }
+
+  // UI updates
+  function updateSteps() {
+    document.querySelectorAll("#steps li").forEach((li) => {
+      const i = Number(li.dataset.step);
+      li.classList.toggle("active", state.phase === "play" && i === state.round);
+      li.classList.toggle("done", state.results[i] !== null);
+    });
+  }
+  function setNow(html) { nowEl.innerHTML = html; }
+  function idleNow() {
+    setNow(`Roleta ${state.round + 1} de 3 · <b>${ROUNDS[state.round].name}</b>`);
+  }
+
+  const NO_DESC = "Sorteado pela roleta. Ninguém soube explicar o motivo.";
+
+  function fillRow(i) {
+    const row = document.querySelector(`.row[data-row="${i}"]`);
+    const dd = row.querySelector("dd");
+    const item = state.results[i];
+    dd.textContent = "";
+    if (!item) {
+      dd.textContent = `Aguardando a roleta ${i + 1}`;
+      row.classList.remove("filled");
+      return;
+    }
+    const strong = document.createElement("strong");
+    strong.textContent = item.s;
+    const span = document.createElement("span");
+    span.textContent = item.d || NO_DESC;
+    dd.append(strong, span);
+    row.classList.remove("filled");
+    void row.offsetWidth;
+    row.classList.add("filled");
+  }
+
+  function newProto() {
+    state.proto = "DTA-2026-" + String(Math.floor(Math.random() * 1e6)).padStart(6, "0");
+    $("proto").textContent = "Protocolo " + state.proto;
+  }
+
+  const fmtPct = (v) => v.toFixed(1).replace(".", ",") + "%";
+
+  function showVerdict(animate) {
+    $("verdict").hidden = false;
+    $("score").textContent = fmtPct(state.score);
+    $("parecer").textContent = state.parecer;
+    const bar = $("bar");
+    if (animate && !reduce) {
+      bar.style.width = "0";
+      requestAnimationFrame(() => requestAnimationFrame(() => { bar.style.width = state.score + "%"; }));
+    } else {
+      bar.style.width = state.score + "%";
+    }
+  }
+
+  function finish() {
+    state.phase = "done";
+    state.score = 61 + Math.random() * 38.9;
+    state.parecer = PARECERES[Math.floor(Math.random() * PARECERES.length)];
+    showVerdict(true);
+    updateSteps();
+    setNow(`Destino definido. <b>Boa sorte lá fora.</b>`);
+    spinBtn.textContent = "Jogar de novo";
+    spinBtn.disabled = false;
+    setTimeout(sadTrombone, 350);
+    bulbLoop();
+  }
+
+  let bulbRaf = 0;
+  function bulbLoop() {
+    cancelAnimationFrame(bulbRaf);
+    if (reduce) return;
+    const loop = (t) => {
+      if (state.phase !== "done" || state.spinning) return;
+      draw(t);
+      bulbRaf = requestAnimationFrame(loop);
+    };
+    bulbRaf = requestAnimationFrame(loop);
+  }
+
+  function land(idx) {
+    state.spinning = false;
+    state.landed = idx;
+    state.results[state.round] = items()[idx];
+    draw(performance.now());
+    fillRow(state.round);
+    updateSteps();
+    ding();
+    setNow(`Saiu: <b>${items()[idx].s}</b>`);
+
+    if (state.round < 2) {
+      spinBtn.textContent = "Trocando a roleta…";
+      setTimeout(() => {
+        canvas.classList.add("swap");
+        setTimeout(() => {
+          state.round += 1;
+          state.landed = null;
+          draw(performance.now());
+          canvas.classList.remove("swap");
+          updateSteps();
+          idleNow();
+          spinBtn.textContent = `Girar: ${ROUNDS[state.round].name}`;
+          spinBtn.disabled = false;
+        }, reduce ? 0 : 350);
+      }, reduce ? 600 : 1500);
+    } else {
+      setTimeout(finish, reduce ? 200 : 700);
+    }
+  }
+
+  function spin() {
+    if (state.spinning) return;
+    if (state.phase === "done") { reset(); return; }
+    ensureAudio();
+    cancelAnimationFrame(bulbRaf);
+
+    const n = items().length;
+    const seg = TAU / n;
+    const idx = Math.floor(Math.random() * n);
+    const jitter = (Math.random() - 0.5) * seg * 0.6;
+    const target = -(idx + 0.5) * seg + jitter;
+    const r0 = state.rot;
+    const spins = reduce ? 1 : 5 + Math.floor(Math.random() * 3);
+    const final = r0 + spins * TAU + mod(target - r0, TAU);
+    const dur = reduce ? 1200 : 4600 + Math.random() * 900;
+
+    state.spinning = true;
+    state.landed = null;
+    spinBtn.disabled = true;
+    spinBtn.textContent = "Girando…";
+    setNow(`Consultando o algoritmo sobre seu <b>${ROUNDS[state.round].name.toLowerCase()}</b>…`);
+
+    const start = performance.now();
+    let last = indexAt(r0);
+    const frame = (now) => {
+      const p = Math.min(1, (now - start) / dur);
+      const e = 1 - Math.pow(1 - p, 4);
+      state.rot = r0 + (final - r0) * e;
+      const k = indexAt(state.rot);
+      if (k !== last) {
+        last = k;
+        tick();
+        if (!reduce) {
+          pointer.classList.remove("wiggle");
+          void pointer.offsetWidth;
+          pointer.classList.add("wiggle");
+        }
+      }
+      draw(now);
+      if (p < 1) requestAnimationFrame(frame);
+      else { state.rot = mod(state.rot, TAU); land(idx); }
+    };
+    requestAnimationFrame(frame);
+  }
+
+  function reset() {
+    cancelAnimationFrame(bulbRaf);
+    state.round = 0;
+    state.landed = null;
+    state.results = [null, null, null];
+    state.phase = "play";
+    [0, 1, 2].forEach(fillRow);
+    $("verdict").hidden = true;
+    $("copybox").hidden = true;
+    $("copied").textContent = "";
+    newProto();
+    updateSteps();
+    idleNow();
+    spinBtn.textContent = "Girar";
+    spinBtn.disabled = false;
+    draw(performance.now());
+  }
+
+  // Copy
+  function resultText() {
+    const [a, b, c] = state.results.map((r) => `${r.s}. ${r.d || NO_DESC}`);
+    return [
+      "ROLETA DA OBSOLESCÊNCIA · meu destino pós-IA",
+      `Protocolo ${state.proto}`,
+      "",
+      `Emprego: ${a}`,
+      `Moradia: ${b}`,
+      `Papel na revolução: ${c}`,
+      "",
+      `Grau de substituibilidade: ${fmtPct(state.score)}`,
+      `Parecer do algoritmo: ${state.parecer}`
+    ].join("\n");
+  }
+  $("copy").addEventListener("click", () => {
+    const text = resultText();
+    const fallback = () => {
+      const box = $("copybox");
+      box.value = text;
+      box.hidden = false;
+      box.focus();
+      box.select();
+      $("copied").textContent = "Selecionado. Use Ctrl+C para copiar.";
+    };
+    try {
+      navigator.clipboard.writeText(text).then(() => {
+        $("copied").textContent = "Copiado. Agora espalhe o pânico.";
+      }, fallback);
+    } catch (e) { fallback(); }
+  });
+  $("again").addEventListener("click", reset);
+  spinBtn.addEventListener("click", spin);
+
+  // Editor
+  let edTab = 0;
+  const edMsg = $("ed-msg");
+  const listEl = $("item-list");
+  function say(text, warn = false) {
+    edMsg.textContent = text;
+    edMsg.classList.toggle("warn", warn);
+  }
+  function renderEditor() {
+    const list = ROUNDS[edTab].items;
+    const n = list.length;
+    document.querySelectorAll("#ed-tabs button").forEach((b) => {
+      b.setAttribute("aria-pressed", String(Number(b.dataset.tab) === edTab));
+    });
+    listEl.textContent = "";
+    list.forEach((it, i) => {
+      const li = document.createElement("li");
+      const sw = document.createElement("span");
+      sw.className = "swatch";
+      sw.style.background = segColor(i, n);
+      const txt = document.createElement("div");
+      txt.className = "item-text";
+      const strong = document.createElement("strong");
+      strong.textContent = it.s;
+      txt.append(strong);
+      if (it.d) {
+        const sp = document.createElement("span");
+        sp.textContent = it.d;
+        txt.append(sp);
+      }
+      const del = document.createElement("button");
+      del.type = "button";
+      del.className = "del";
+      del.dataset.del = String(i);
+      del.textContent = "Apagar";
+      del.setAttribute("aria-label", `Apagar ${it.s}`);
+      del.disabled = n <= MIN_ITEMS;
+      li.append(sw, txt, del);
+      listEl.append(li);
+    });
+    $("ed-count").textContent = `${n} ${n === 1 ? "opção" : "opções"} na roleta ${ROUNDS[edTab].name} · mínimo ${MIN_ITEMS}, máximo ${MAX_ITEMS}`;
+    $("add-btn").disabled = n >= MAX_ITEMS;
+    $("restore-confirm").hidden = true;
+    $("restore").hidden = false;
+  }
+  function afterEdit() {
+    saveOptions();
+    if (edTab === state.round) {
+      state.landed = null;
+      draw(performance.now());
+    }
+    renderEditor();
+  }
+  function busy() {
+    if (state.spinning) { say("Espere a roleta parar para editar.", true); return true; }
+    return false;
+  }
+
+  $("ed-tabs").addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-tab]");
+    if (!b) return;
+    edTab = Number(b.dataset.tab);
+    say("");
+    renderEditor();
+  });
+
+  listEl.addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-del]");
+    if (!b || busy()) return;
+    const list = ROUNDS[edTab].items;
+    if (list.length <= MIN_ITEMS) { say(`A roleta precisa de pelo menos ${MIN_ITEMS} opções.`, true); return; }
+    const [removed] = list.splice(Number(b.dataset.del), 1);
+    afterEdit();
+    say(`"${removed.s}" saiu da roleta ${ROUNDS[edTab].name}.`);
+  });
+
+  $("add-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (busy()) return;
+    const nameEl = $("add-name");
+    const descEl = $("add-desc");
+    const name = nameEl.value.trim().replace(/\s+/g, " ");
+    const desc = descEl.value.trim().replace(/\s+/g, " ");
+    const list = ROUNDS[edTab].items;
+    if (!name) { say("Escreva um nome para a opção.", true); nameEl.focus(); return; }
+    if (list.length >= MAX_ITEMS) { say(`A roleta já tem o máximo de ${MAX_ITEMS} opções. Apague alguma antes.`, true); return; }
+    if (list.some((x) => x.s.toLowerCase() === name.toLowerCase())) { say(`"${name}" já está nessa roleta.`, true); nameEl.focus(); return; }
+    list.push({ s: name, d: desc });
+    nameEl.value = "";
+    descEl.value = "";
+    nameEl.focus();
+    afterEdit();
+    say(`"${name}" entrou na roleta ${ROUNDS[edTab].name}.`);
+  });
+
+  $("restore").addEventListener("click", () => {
+    $("restore-q").textContent = `Desfazer suas mudanças na roleta ${ROUNDS[edTab].name}?`;
+    $("restore").hidden = true;
+    $("restore-confirm").hidden = false;
+    $("restore-no").focus();
+  });
+  $("restore-no").addEventListener("click", () => {
+    $("restore-confirm").hidden = true;
+    $("restore").hidden = false;
+    $("restore").focus();
+  });
+  $("restore-yes").addEventListener("click", () => {
+    if (busy()) return;
+    ROUNDS[edTab].items = DEFAULTS[edTab].map((x) => ({ ...x }));
+    afterEdit();
+    say(`Roleta ${ROUNDS[edTab].name} voltou às opções originais.`);
+  });
+
+  renderEditor();
+
+  // Keep progress across live updates of the page
+  const hot = window.claude && window.claude.hot;
+  if (hot && hot.snapshot) {
+    hot.snapshot(() => ({
+      round: state.round,
+      phase: state.phase,
+      results: state.results,
+      proto: state.proto, score: state.score, parecer: state.parecer
+    }));
+  }
+
+  function start(data) {
+    newProto();
+    if (data && Array.isArray(data.results)) {
+      state.results = data.results.map((r) => (r && typeof r.s === "string" ? r : null));
+      state.round = Math.min(2, data.round || 0);
+      if (data.proto) { state.proto = data.proto; $("proto").textContent = "Protocolo " + state.proto; }
+      state.results.forEach((_, i) => fillRow(i));
+      if (data.phase === "done" && state.results.every(Boolean)) {
+        state.phase = "done";
+        state.score = data.score;
+        state.parecer = data.parecer;
+        showVerdict(false);
+        spinBtn.textContent = "Jogar de novo";
+        setNow(`Destino definido. <b>Boa sorte lá fora.</b>`);
+      } else {
+        if (state.results[state.round]) state.round = Math.min(2, state.round + 1);
+        idleNow();
+        spinBtn.textContent = state.round === 0 ? "Girar" : `Girar: ${ROUNDS[state.round].name}`;
+      }
+    } else {
+      idleNow();
+    }
+    updateSteps();
+    new ResizeObserver(resize).observe(canvas);
+    resize();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => draw(performance.now()));
+  }
+
+  if (hot && hot.ready) hot.ready(start);
+  else start((hot && hot.data) || {});
+})();
+</script>
+</body>
+</html>
